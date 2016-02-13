@@ -37,7 +37,7 @@
 #define MASK_SCU_CLKCR_IDIV          (WORD)( 0xFFu << INDX_SCU_CLKCR_IDIV )      ///< Divider Selection Bit[15:8]
 
 #define INDX_SCU_CLKCR_PCLKSEL       16
-#define MASK_SCU_CLKCR_PCLKSEL       (WORD)( 0x1u << INDX_SCU_CLKCR_PCLKSEL )    ///< PCLK Clock Select 
+#define MASK_SCU_CLKCR_PCLKSEL       (WORD)( 0x1u << INDX_SCU_CLKCR_PCLKSEL )    ///< PCLK Clock Select
 
 #define INDX_SCU_CLKCR_RTCCLKSEL     17
 #define MASK_SCU_CLKCR_RTCCLKSEL     (WORD)( 0x7u << INDX_SCU_CLKCR_RTCCLKSEL )  ///< RTC Clock Select Bit[19:17]
@@ -71,21 +71,3 @@
 // COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
 // ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-// xmPropKit10
-//
-// Author:  Dominik Kuhn
-// Updated: 01/17/2016
-// Designed For: XMC1100
-// Version: 1.0
-//
-// Copyright (c) 2016 Dominik Kuhn
-// See end of file for terms of use.
-//
-// Update History:
-//
-// v1.0 - Original release - 01/17/2016.
-//
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-

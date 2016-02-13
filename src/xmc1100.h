@@ -20,6 +20,11 @@
 
 #include <Compiler.h>
 
+#include <RB_NVIC.h>
+#include <RB_NVM.h>
+#include <RB_RTC.h>
+#include <RB_WDT.h>
+#include <RB_ERU.h>
 #include <RB_USIC.h>
 #include <RB_GPIO.h>
 
@@ -277,7 +282,7 @@
 // USIC_CH1_IN IS AN ARRAY OF 32 WORDS (INDEX 0 TO 31)
 #define USIC0_CH1_IN		PTR_32(USIC0_CH1_BASE + 0x180)
 
-// VADC0 
+// VADC0
 #define VADC0_ID		REGISTER_32(VADC_BASE + 0x008)
 #define VADC0_CLC		REGISTER_32(VADC_BASE + 0x000)
 #define VADC0_OCS		REGISTER_32(VADC_BASE + 0x028)
@@ -489,9 +494,12 @@
 #define NVM_NVMCONF                     REGISTER_16(NVM_BASE + 0x0008)
 
 
-
 // Zusatz Test 06.12.2015
 // RegbankTypeUSIC volatile rbUSIC0_CH1    ATTRIBUTE(at(USIC0_CH1_BASE  ));
+
+#define rbERU                   (*((volatile RegbankTypeERU *)(ERU0_BASE)))
+
+#define rbNVM                   (*((volatile RegbankTypeNVM *)(NVM_BASE)))
 
 #define rbUSIC0_CH0             (*((volatile RegbankTypeUSIC *)(USIC0_CH0_BASE)))
 #define rbUSIC0_CH1             (*((volatile RegbankTypeUSIC *)(USIC0_CH1_BASE)))

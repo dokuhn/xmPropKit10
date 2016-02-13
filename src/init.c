@@ -1,6 +1,6 @@
-// Initialization and interrupt vectors for the infineon 
+// Initialization and interrupt vectors for the infineon
 // XMC1100 microcontroller.
-// No claims are made as to the suitability of this code for any 
+// No claims are made as to the suitability of this code for any
 // purpose whatsoever.  Use at your own risk!
 // Does not include initialization for C++ global/static objects
 // so probably best to use this with C projects for now.
@@ -21,15 +21,15 @@ extern unsigned char  BSS_END;
 // The XMC1100 remaps interrupt vectors to RAM.  The boot loader
 // looks for the program entry address at 0x10001004 and the
 // initial stack pointer as 0x10001000.  These are defined in
-// the "vectors" section below.  The section "vectors" is 
+// the "vectors" section below.  The section "vectors" is
 // placed at the beginning of flash by the linker script
-// Another useful feature of this chip is that you can 
-// pre-program startup considtions such as CPU speed and 
+// Another useful feature of this chip is that you can
+// pre-program startup considtions such as CPU speed and
 // which periperals.  This is done by writing values in to
 // CLK_VAL1 and CLK_VAL2 below
 
 const void * FlashVectors[] __attribute__((section(".vectors"))) ={
-        (void *)0x20004000,    	       /* Top of stack  @0x10001000 */ 
+        (void *)0x20004000,    	       /* Top of stack  @0x10001000 */
 	init, 		 	       /* Reset Handler @0x10001004 */
 	(void *)0,		       /* @0x10001008 */
 	(void *)0,		       /* @0x1000100c */
@@ -37,7 +37,7 @@ const void * FlashVectors[] __attribute__((section(".vectors"))) ={
 	(void *)0xffffffff	       /* CLK_VAL2   @0x10001014 */
 };
 // The remaining interrupt vectors are relocated to RAM where a jump
-// table should be placed to the actual interrupt handlers.  The jump 
+// table should be placed to the actual interrupt handlers.  The jump
 // table takes the following form:
 //	ldr R0,=handler_address
 //  mov PC,R0
@@ -45,7 +45,7 @@ const void * FlashVectors[] __attribute__((section(".vectors"))) ={
 // fits neatly into a jump table entry.
 
 inline void JumpTable(void) __attribute__(( section(".remapped_vectors")));
-inline void JumpTable(void) 
+inline void JumpTable(void)
 {
 	asm(" .long 0 "); // -15 reserved
 	asm(" .long 0 "); // -14 reserved
@@ -58,8 +58,8 @@ inline void JumpTable(void)
 	asm(" .long 0 "); // -7 reserved
 	asm(" .long 0 "); // -6 reserved
 	asm(" .long 0 "); // -5 SVCall
-	asm(" .long 0 "); // -4 reserved 
-	asm(" .long 0 "); // -3 reserved 
+	asm(" .long 0 "); // -4 reserved
+	asm(" .long 0 "); // -3 reserved
 	asm(" .long 0 "); // -2 PendSV
 	asm(" .long 0 "); // -1 Systick handler
 
@@ -73,17 +73,17 @@ inline void JumpTable(void)
 	asm(" .long 0 "); // IRQ 7
 	asm(" .long 0 "); // IRQ 8
 
-	asm("  ldr R0,=IRQ_I2C_EV "); // IRQ 9   
+	asm("  ldr R0,=IRQ_I2C_EV "); // IRQ 9
 	asm("  mov PC,R0 ");
-	asm("  ldr R0,=IRQ_I2C_EV "); // IRQ 10 
+	asm("  ldr R0,=IRQ_I2C_EV "); // IRQ 10
 	asm("  mov PC,R0 ");
-	asm("  ldr R0,=IRQ_I2C_EV "); // IRQ 11 
+	asm("  ldr R0,=IRQ_I2C_EV "); // IRQ 11
 	asm("  mov PC,R0 ");
-       	asm(" .long 0 "); // IRQ 12
-       	asm(" .long 0 "); // IRQ 13
-       	asm(" .long 0 "); // IRQ 14
+  asm(" .long 0 "); // IRQ 12
+  asm(" .long 0 "); // IRQ 13
+  asm(" .long 0 "); // IRQ 14
 
-       	asm(" .long 0 "); // IRQ 15
+  asm(" .long 0 "); // IRQ 15
 	asm(" .long 0 "); // IRQ 16
 	asm(" .long 0 "); // IRQ 17
 	asm(" .long 0 "); // IRQ 18
@@ -100,7 +100,7 @@ inline void JumpTable(void)
 	asm(" .long 0 "); // IRQ 29
 	asm(" .long 0 "); // IRQ 30
 	asm(" .long 0 "); // IRQ 31
-	
+
 };
 
 void init()
@@ -121,7 +121,7 @@ void init()
 	len = &BSS_END - &BSS_START;
 	while (len--)
 		*dest++=0;
-	
+
 	main();
 }
 

@@ -17,69 +17,39 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///
-///  RB_GPIO.h
+///  RB_SYST.h
 ///
-/// \file RB_GPIO.h
+/// \file RB_SYST.h
 
-
-#ifndef __RB_GPIO_H__
-#define __RB_GPIO_H__
+#ifndef __RB_SYST_H__
+#define __RB_SYST_H__
 
 #include "Compiler.h"
 
 
-/// Datentyp für GPIO-Registerbank, s. Reference Manual Table 18-3.
-typedef struct __regbank_GPIO
+/// Datentyp fuer SYST-Registerbank, s. Reference Manual,
+typedef struct __regbank_SYST
 {
 
-  WORD OUT;                     ///< Port n Output Register
-  WORD OMR;                     ///< Port n Output Modification Register
+  WORD CSR;
 
-  WORD reserved00;
-  WORD reserved01;
+  WORD RVR;
 
-  WORD IOCR0;                  ///< Port n Input / Output Control Register 0
-  WORD IOCR4;                  ///< Port n Input / Output Control Register 4
-  WORD IOCR8;                  ///< Port n Input / Output Control Register 8
-  WORD IOCR12;                 ///< Port n Input / Output Control Register 12
+  WORD CVR;
 
-  WORD reserved02;
-  WORD IN;                     ///< Port n Input Register
+  WORD CALIB;
 
-  WORD reserved03;
-  WORD reserved04;
-  WORD reserved05;
-  WORD reserved06;
-  WORD reserved07;
-  WORD reserved08;
+}RegbankTypeSYST;
 
-  WORD PHCR0;                  ///< Port n Pad Hysteresis Control Register 0
-  WORD PHCR1;                  ///< Port n Pad Hysteresis Control Register 1
 
-  WORD reserved09;
-  WORD reserved10;
-  WORD reserved11;
-  WORD reserved12;
-  WORD reserved13;
-  WORD reserved14;
+extern RegbankTypeSYST volatile rbSYST;               ///< SysTick - Registers.
 
-  WORD PDISC;                  ///< Port n Pin Function Decision Control Register (ADC ports)
 
-  WORD reserved15;
-  WORD reserved16;
-  WORD reserved17;
+/* --------------------------------  STK  ------------------------------- */
+/*
 
-  WORD PPS;                   ///< Port n Pin Power Save Register
 
-  WORD reserved18;
-
-  WORD HWSEL;                 ///< Port n Hardware Select Register
-
-}RegbankTypeGPIO;
-
-extern RegbankTypeGPIO volatile rbGPIOp0;               ///< GPIO_P0-Registerbank.
-extern RegbankTypeGPIO volatile rbGPIOp1;               ///< GPIO_P1-Registerbank.
-extern RegbankTypeGPIO volatile rbGPIOp2;               ///< GPIO_P2-Registerbank.
+*/
 
 
 #endif

@@ -34,26 +34,26 @@ static HWRD bufferAddr = 0xFFFFu ;                                 ///< Address 
 
 void writeCache( void ){
   BYTE i = 0;
-  
+
   eraseNVM( (WORD)(NVM_START_ADDRESS) + bufferAddr );
   P1_OMR = (0x1u << 0u) | (0x1u << 16u);
-  
+
   for( i = 0u; i < Page_Size; i++ ){
-    writeNVM( (WORD)(NVM_START_ADDRESS) + bufferAddr + (16u * i) , &(readWriteBuffer[ 4u * i ]) );    
+    writeNVM( (WORD)(NVM_START_ADDRESS) + bufferAddr + (16u * i) , &(readWriteBuffer[ 4u * i ]) );
   }
-  
+
 }
 
 
 void writeByte( HWRD tAddress , BYTE wByte ){
-  
+
   WORD readBuf;
   BYTE i = 0;
-  
+
   if( ((tAddress >> 8u) << 8u) != bufferAddr ){
 
-    writeCache();    
-    
+    writeCache();
+
     // read new Page into Read-Write-Buffer
     for( i = 0u; i < (Block_Size * Page_Size); i++ ){
       readNVM( (WORD)(NVM_START_ADDRESS) + (((WORD)(tAddress >> 8u) << 8u) + (4u * i))  , readWriteBuffer + i  );
@@ -62,7 +62,7 @@ void writeByte( HWRD tAddress , BYTE wByte ){
   }
 
   P1_OMR = (0x1u << 1u) | (0x1u << 17u);
-  
+
   // find WORD in Page-Buffer
   readBuf = readWriteBuffer[ (0x3Fu & (tAddress >> 2u)) ];
 
@@ -71,7 +71,7 @@ void writeByte( HWRD tAddress , BYTE wByte ){
 
   // wirtes WORD-Buffer back in Page-Buffer
   readWriteBuffer[ (0x3Fu & (tAddress >> 2u)) ] = readBuf;
-  
+
 }
 
 
@@ -87,7 +87,7 @@ void writeBuffer( HWRD tAddress, BYTE *wByte, BYTE bufSize ){
 
 
 BYTE getByte( HWRD tAddress ){
-  
+
   WORD readBuf;
   BYTE byteBuf;
 
@@ -97,94 +97,16 @@ BYTE getByte( HWRD tAddress ){
     readBuf = readWriteBuffer[ (0x3Fu & (tAddress >> 2u)) ];
 
   }else{
-    
+
     readNVM( (WORD)(NVM_START_ADDRESS) + (((WORD)(tAddress) >> 2u) << 2u) , &readBuf );
   }
 
-  byteBuf = (BYTE)( readBuf >> (8u * (tAddress & 0x3u)) );    
+  byteBuf = (BYTE)( readBuf >> (8u * (tAddress & 0x3u)) );
 
   return byteBuf ;
 }
 
 
-
-
-/*
-void writeByte( HWRD address , BYTE wByte ){
-  static bool firstInit = true;
-  WORD readBuf;
-  BYTE i = 0;
-
-  if( (((WORD)(address)  >> 8u) << 8u) == addrHandler ){
-
-    // find WORD in Page-Buffer
-    readBuf = readWriteBuffer[ (0xFu & (address >> 2u)) ];
-
-    // modify BYTE in WORD-Buffer
-    readBuf = ( readBuf & ~(0xFFu << (8u * (address & 0x3u))) ) |  (wByte << (8u * (address & 0x3u))) ;
-
-    // wirtes WORD-Buffer back in Page-Buffer
-    readWriteBuffer[ (0xFu & (address >> 2u)) ] = readBuf;
-
-  }else{
-
-    // erase old Page if not first Init
-    if( firstInit == false ){
-
-      for( i = 0u; i < Page_Size; i++ ){
-
-	
-      }
-      
-    }
-
-    // read new Page in the Read-Write-Buffer
-    for( i = 0u; i < (Block_Size * Page_Size); i++ ){
-      readNVM( (WORD)(NVM_START_ADDRESS)  + (((WORD)(address >> 8u) << 8u) + (4u * i))  , &readBuf  );
-      readWriteBuffer[i] = readBuf;
-    }
-   
-    addrHandler = (((WORD)(address) >> 8u) << 8u);
-    firstInit = false;
-
-    // find WORD in Page-Buffer
-    readBuf = readWriteBuffer[ (0xFu & (address >> 2u)) ];
-
-    // modify BYTE in WORD-Buffer
-    readBuf = ( readBuf & ~(0xFFu << (8u * (address & 0x3u))) ) |  (wByte << (8u * (address & 0x3u))) ;
-
-    // wirtes WORD-Buffer back in Page-Buffer
-    readWriteBuffer[ (0xFu & (address >> 2u)) ] = readBuf;   
-  }
-
-}
-
-
-BYTE getByte( HWRD address ){
-  
-  WORD readBuf;
-  BYTE byteBuf;
-
-  if( (((WORD)(address) >> 8u) << 8u) == addrHandler ){
-
-    P1_OMR = (0x1u << 0u) | (0x1u << 16u);
-
-    // find WORD in Page-Buffer
-    readBuf = readWriteBuffer[ (0xFu & (address >> 2u)) ];
-    byteBuf = (BYTE)( readBuf >> (8u * (address & 0x3u)) );    
-
-  }else{
-    
-    P1_OMR = (0x1u << 1u) | (0x1u << 17u);
-    readNVM( (WORD)(NVM_START_ADDRESS) + (((WORD)(address) >> 2u) << 2u) , &readBuf );
-    byteBuf =  (BYTE)( readBuf >> (8u * (address & 0x3u)));
-    
-  }
-
-  return byteBuf ;
-}
-
-*/ 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                  TERMS OF USE: MIT License
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -29,47 +29,63 @@
 #include "Compiler.h"
 
 
-/* --------------------------------  NVM_NVMSTATUS  ------------------------------- */
-#define INDX_NVM_NVMSTATUS_BUSY                0                                           
-#define MASK_NVM_NVMSTATUS_BUSY                (HWRD)(0x01u << INDX_NVM_NVMSTATUS_BUSY)    
+/// Datentyp fuer NVM-Registerbank (Non Volatile Memory) , s. Reference Manual Table 8-3 ( Page 8-9),
+typedef struct __regbank_NVM{
 
-#define INDX_NVM_NVMSTATUS_SLEEP               1                                           
-#define MASK_NVM_NVMSTATUS_SLEEP               (HWRD)(0x01u << INDX_NVM_NVMSTATUS_SLEEP)   
+  HWRD STATUS;
+  HWRD reserved01;
 
-#define INDX_NVM_NVMSTATUS_VERR                2                                           
-#define MASK_NVM_NVMSTATUS_VERR                (HWRD)(0x03u << INDX_NVM_NVMSTATUS_VERR)    
+  HWRD PROG;
+  HWRD reserved02;
 
-#define INDX_NVM_NVMSTATUS_ECC1READ            4                                           
+  HWRD CONF;
+
+}RegbankTypeNVM;
+
+extern RegbankTypeNVM volatile rbNVM;               ///< Non Volatile Memory - Registers.
+
+
+// --------------------------------  NVM_NVMSTATUS  ------------------------------- //
+#define INDX_NVM_NVMSTATUS_BUSY                0
+#define MASK_NVM_NVMSTATUS_BUSY                (HWRD)(0x01u << INDX_NVM_NVMSTATUS_BUSY)     ///< NVMSTATUS BUSY Mask
+
+#define INDX_NVM_NVMSTATUS_SLEEP               1
+#define MASK_NVM_NVMSTATUS_SLEEP               (HWRD)(0x01u << INDX_NVM_NVMSTATUS_SLEEP)    ///< NVMSTATUS: SLEEP Mask
+
+#define INDX_NVM_NVMSTATUS_VERR                2
+#define MASK_NVM_NVMSTATUS_VERR                (HWRD)(0x03u << INDX_NVM_NVMSTATUS_VERR)     ///< NVMSTATUS: VERR Mask
+
+#define INDX_NVM_NVMSTATUS_ECC1READ            4
 #define MASK_NVM_NVMSTATUS_ECC1READ            (HWRD)(0x01u << INDX_NVM_NVMSTATUS_ECC1READ)
 
-#define INDX_NVM_NVMSTATUS_ECC2READ            5                                           
+#define INDX_NVM_NVMSTATUS_ECC2READ            5
 #define MASK_NVM_NVMSTATUS_ECC2READ            (HWRD)(0x01u << INDX_NVM_NVMSTATUS_ECC2READ)
 
-#define INDX_NVM_NVMSTATUS_WRPERR              6                                           
-#define MASK_NVM_NVMSTATUS_WRPERR              (HWRD)(0x01u << INDX_NVM_NVMSTATUS_WRPERR)  
+#define INDX_NVM_NVMSTATUS_WRPERR              6
+#define MASK_NVM_NVMSTATUS_WRPERR              (HWRD)(0x01u << INDX_NVM_NVMSTATUS_WRPERR)
 
-/* ---------------------------------  NVM_NVMPROG  -------------------------------- */
-#define INDX_NVM_NVMPROG_ACTION                0                                           
-#define MASK_NVM_NVMPROG_ACTION                (HWRD)(0xFFu << INDX_NVM_NVMPROG_ACTION)    
+// ---------------------------------  NVM_NVMPROG  -------------------------------- //
+#define INDX_NVM_NVMPROG_ACTION                0
+#define MASK_NVM_NVMPROG_ACTION                (HWRD)(0xFFu << INDX_NVM_NVMPROG_ACTION)
 
-#define INDX_NVM_NVMPROG_RSTVERR               12                                          
-#define MASK_NVM_NVMPROG_RSTVERR               (HWRD)(0x01u << INDX_NVM_NVMPROG_RSTVERR)  
+#define INDX_NVM_NVMPROG_RSTVERR               12
+#define MASK_NVM_NVMPROG_RSTVERR               (HWRD)(0x01u << INDX_NVM_NVMPROG_RSTVERR)
 
-#define INDX_NVM_NVMPROG_RSTECC                13                                         
-#define MASK_NVM_NVMPROG_RSTECC                (HWRD)(0x01u << INDX_NVM_NVMPROG_RSTECC)   
+#define INDX_NVM_NVMPROG_RSTECC                13
+#define MASK_NVM_NVMPROG_RSTECC                (HWRD)(0x01u << INDX_NVM_NVMPROG_RSTECC)
 
-/* ---------------------------------  NVM_NVMCONF  -------------------------------- */
-#define INDX_NVM_NVMCONF_HRLEV                 1                                          
-#define MASK_NVM_NVMCONF_HRLEV                 (HWRD)(0x03u << INDX_NVM_NVMCONF_HRLEV)    
+// ---------------------------------  NVM_NVMCONF  -------------------------------- //
+#define INDX_NVM_NVMCONF_HRLEV                 1
+#define MASK_NVM_NVMCONF_HRLEV                 (HWRD)(0x03u << INDX_NVM_NVMCONF_HRLEV)
 
-#define INDX_NVM_NVMCONF_SECPROT               4                                          
-#define MASK_NVM_NVMCONF_SECPROT               (HWRD)(0xFFu << INDX_NVM_NVMCONF_SECPROT)  
+#define INDX_NVM_NVMCONF_SECPROT               4
+#define MASK_NVM_NVMCONF_SECPROT               (HWRD)(0xFFu << INDX_NVM_NVMCONF_SECPROT)
 
-#define INDX_NVM_NVMCONF_INT_ON                14                                         
-#define MASK_NVM_NVMCONF_INT_ON                (HWRD)(0x01u << INDX_NVM_NVMCONF_INT_ON)   
+#define INDX_NVM_NVMCONF_INT_ON                14
+#define MASK_NVM_NVMCONF_INT_ON                (HWRD)(0x01u << INDX_NVM_NVMCONF_INT_ON)
 
-#define INDX_NVM_NVMCONF_NVM_ON                15                                         
-#define MASK_NVM_NVMCONF_NVM_ON                (HWRD)(0x01u << INDX_NVM_NVMCONF_NVM_ON)   
+#define INDX_NVM_NVMCONF_NVM_ON                15
+#define MASK_NVM_NVMCONF_NVM_ON                (HWRD)(0x01u << INDX_NVM_NVMCONF_NVM_ON)
 
 
 #endif

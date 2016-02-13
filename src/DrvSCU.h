@@ -32,7 +32,6 @@
 extern WORD SystemCoreClock;
 
 
-
 void SystemCoreClockUpdate(void);
 
 

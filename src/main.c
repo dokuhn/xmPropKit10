@@ -33,16 +33,17 @@ const HWRD address = 0xA0u;
 
 int main()
 {
-  
+
   // Clock configuration
   SCU_PASSWD = 0x000000C0UL;      // disable bit protection
   SCU_CLKCR = 0x3FF00100UL;       //MCLK = 32 MHz, PCLK = 32 MHz
   while((SCU_CLKCR & MASK_SCU_CLKCR_VDDC2LOW));
   SCU_PASSWD = 0x000000C3UL;      // enable bit protection
   // SystemCoreClockUpdate();
-  
-  // setup Debug LEDs
 
+
+
+  // setup Debug LEDs
   InitGpioOutput( gpioPort0 , 0u );
   // P0_IOCR0 |= BIT7;                         ///< P0.0
 
@@ -53,10 +54,12 @@ int main()
   rbGPIOp2.IOCR8 |= BIT23 + BIT31;
   // P2_IOCR8 |= BIT23 + BIT31;
                 ///< P2.10 + P2.11
-  rbGPIOp2.PDISC = rbGPIOp2.PDISC & ~BIT10; 
+  rbGPIOp2.PDISC = rbGPIOp2.PDISC & ~BIT10;
   // P2_PDISC  = P2_PDISC & ~BIT10;
 
  P2_PDISC  = P2_PDISC & ~BIT11;
+
+
 
 
   if( (initNVM() ==  NVMNoError) && (initI2C(I2CInst1,address) == I2CNoError) ){
@@ -70,6 +73,7 @@ int main()
   }
 
 
+
   while(1){
 
 
@@ -77,9 +81,7 @@ int main()
 
   return 0;
 
-
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

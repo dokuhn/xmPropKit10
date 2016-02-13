@@ -17,69 +17,36 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ///
-///  RB_GPIO.h
+///  RB_NVIC.h
 ///
-/// \file RB_GPIO.h
+/// \file RB_NVIC.h
 
-
-#ifndef __RB_GPIO_H__
-#define __RB_GPIO_H__
+#ifndef __RB_NVIC_H__
+#define __RB_NVIC_H__
 
 #include "Compiler.h"
 
+/// The IPR0 - IPR7 registers provide a 8-bit priority field for each interrupt node. Each registers holds four priority fields.
+/// Each priority field holds a priority value, 0 - 192. The lower the value, the greater the priority of the corresponding node.
+/// The processor implements only bits [7:6] of each field, bits[5:0] reads as 0 and ignores writes. This means writing 255 to
+/// a priority register saves value 192 to the register.
 
-/// Datentyp für GPIO-Registerbank, s. Reference Manual Table 18-3.
-typedef struct __regbank_GPIO
-{
+// --------------------------------  IPRx  ------------------------------- //
 
-  WORD OUT;                     ///< Port n Output Register
-  WORD OMR;                     ///< Port n Output Modification Register
+#define INDX_NVIC_IPRx_PRI_0           0
+#define MASK_NVIC_IPRx_PRI_0           (WORD)( 0xFFu << INDX_NVIC_IPRx_PRI_0 )     ///< priority, Byte Offset 0
 
-  WORD reserved00;
-  WORD reserved01;
+#define INDX_NVIC_IPRx_PRI_1           8
+#define MASK_NVIC_IPRx_PRI_1           (WORD)( 0xFFu << INDX_NVIC_IPRx_PRI_1 )    ///< priority, Byte Offset 1
 
-  WORD IOCR0;                  ///< Port n Input / Output Control Register 0
-  WORD IOCR4;                  ///< Port n Input / Output Control Register 4
-  WORD IOCR8;                  ///< Port n Input / Output Control Register 8
-  WORD IOCR12;                 ///< Port n Input / Output Control Register 12
+#define INDX_NVIC_IPRx_PRI_2           16
+#define MASK_NVIC_IPRx_PRI_2           (WORD)( 0xFFu << INDX_NVIC_IPRx_PRI_2 )    ///< priority, Byte Offset 2
 
-  WORD reserved02;
-  WORD IN;                     ///< Port n Input Register
+#define INDX_NVIC_IPRx_PRI_3           24
+#define MASK_NVIC_IPRx_PRI_3           (WORD)( 0xFFu << INDX_NVIC_IPRx_PRI_3 )    ///< priority, Byte Offset 3
 
-  WORD reserved03;
-  WORD reserved04;
-  WORD reserved05;
-  WORD reserved06;
-  WORD reserved07;
-  WORD reserved08;
 
-  WORD PHCR0;                  ///< Port n Pad Hysteresis Control Register 0
-  WORD PHCR1;                  ///< Port n Pad Hysteresis Control Register 1
 
-  WORD reserved09;
-  WORD reserved10;
-  WORD reserved11;
-  WORD reserved12;
-  WORD reserved13;
-  WORD reserved14;
-
-  WORD PDISC;                  ///< Port n Pin Function Decision Control Register (ADC ports)
-
-  WORD reserved15;
-  WORD reserved16;
-  WORD reserved17;
-
-  WORD PPS;                   ///< Port n Pin Power Save Register
-
-  WORD reserved18;
-
-  WORD HWSEL;                 ///< Port n Hardware Select Register
-
-}RegbankTypeGPIO;
-
-extern RegbankTypeGPIO volatile rbGPIOp0;               ///< GPIO_P0-Registerbank.
-extern RegbankTypeGPIO volatile rbGPIOp1;               ///< GPIO_P1-Registerbank.
-extern RegbankTypeGPIO volatile rbGPIOp2;               ///< GPIO_P2-Registerbank.
 
 
 #endif

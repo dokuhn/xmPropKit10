@@ -23,32 +23,32 @@
 #include <RB_SCU.h>
 #include <DrvNVM.h>
 
+#define WORD_SIZE     (0x4u)    /// 4 Bytes
 
-#define WORD_SIZE     (0x4u)    // 4 Bytes
+// --------------   Private Macro Definitions  ----------------------------- //
 
-/*****************************************************************************
- **                    Private Macro Definitions                            **
- ****************************************************************************/
-/* ROM function Table */
-/* Start address of ROM function table */
+
+
+// ROM function Table
+// Start address of ROM function table,  s. Reference Manual Table XX-YY
 #define ROM_FUNCTION_TABLE_START             (0x00000100u)
-/* Pointer to Erase Flash Page routine */
+// Pointer to Erase Flash Page routine
 #define NvmErase                             (ROM_FUNCTION_TABLE_START + 0x00u)
-/* Pointer to Erase, Program & Verify Flash Page routine */
+// Pointer to Erase, Program & Verify Flash Page routine
 #define NvmProgVerify                        (ROM_FUNCTION_TABLE_START + 0x04u)
-/* Macro for Erase Flash Page routine */
+// Macro for Erase Flash Page routine
 #define NvmErasePage         (*((NVM_STATUS (**) (WORD * scr_add)) NvmErase))
-/* Macro for ProgVerifyPage Flash Page routine */
+// Macro for ProgVerifyPage Flash Page routine
 #define NvmProgVerifyPage    (*((NVM_STATUS (**) (WORD * scr_add, WORD * dst_add)) NvmProgVerify))
 
 
 NVMErrCodeType  initNVM( void ){
-  /* Enabling flash Idle State */
-  NVM_NVMPROG  = 0x3000u;
-  /* reset ECC2READ, ECC1READ in NVMSTATUS */
-  NVM_NVMPROG |= MASK_NVM_NVMPROG_RSTECC;
-  /* reset Write protocol error in NVMSTATUS */
-  NVM_NVMPROG |= MASK_NVM_NVMPROG_RSTVERR;
+
+  rbNVM.PROG  = 0x3000u;                          ///< Enabling flash Idle State
+
+  rbNVM.PROG |= MASK_NVM_NVMPROG_RSTECC;          ///< reset ECC2READ, ECC1READ in NVMSTATUS
+
+  rbNVM.PROG |= MASK_NVM_NVMPROG_RSTVERR;         ///< reset Write protocol error in NVMSTATUS
 
   return NVMNoError;
 }
@@ -68,39 +68,39 @@ NVMErrCodeType writeNVM( WORD address, WORD pBuf[] ){
   WORD rd1;
   WORD rd2;
   WORD rd3;
-  
+
   WORD lWordCnt;
 
-  rd1 = (NVM_NVMPROG   & MASK_NVM_NVMPROG_ACTION)  >> INDX_NVM_NVMPROG_ACTION;
-  rd2 = (NVM_NVMSTATUS & MASK_NVM_NVMSTATUS_BUSY)  >> INDX_NVM_NVMSTATUS_BUSY;
-  rd3 = (NVM_NVMSTATUS & MASK_NVM_NVMSTATUS_SLEEP) >> INDX_NVM_NVMSTATUS_SLEEP;
+  rd1 = (rbNVM.PROG   & MASK_NVM_NVMPROG_ACTION)  >> INDX_NVM_NVMPROG_ACTION;
+  rd2 = (rbNVM.STATUS & MASK_NVM_NVMSTATUS_BUSY)  >> INDX_NVM_NVMSTATUS_BUSY;
+  rd3 = (rbNVM.STATUS & MASK_NVM_NVMSTATUS_SLEEP) >> INDX_NVM_NVMSTATUS_SLEEP;
 
   if( (address < NVM_START_ADDRESS) || (address > NVM_END_ADDRESS) ){
-    
+
     status = NVMInvalidAddress;
-    
+
   }else if( (rd1 == 0x0u) && (rd2 == 0x0u) && (rd3 == 0x0u) ){
     /* updating the ACTION with Oneshot Write and Auto Verify */
     NVM_NVMPROG =  (NVM_NVMPROG & ~MASK_NVM_NVMPROG_ACTION) | ( MASK_NVM_NVMPROG_ACTION & (0x51u << INDX_NVM_NVMPROG_ACTION) );
-  
-    /* Writing a Block of Data */ 
+
+    /* Writing a Block of Data */
     for( lWordCnt = 0u; lWordCnt < WORD_SIZE; lWordCnt++ ){
       *((WORD *)(  address + (WORD_SIZE * lWordCnt) )) = pBuf[lWordCnt] ;
     }
-    
+
     /* Polling Busy Flag until Idle State */
     while( ((NVM_NVMSTATUS & MASK_NVM_NVMSTATUS_BUSY) >> INDX_NVM_NVMSTATUS_BUSY) != 0u);
 
     /* Wait for 10us to complete thw verification (need to check) */
     SCU_CLKCR = (SCU_CLKCR & ~MASK_SCU_CLKCR_CNTADJ) | (MASK_SCU_CLKCR_CNTADJ & (0x2AA << INDX_SCU_CLKCR_CNTADJ));
     while( SCU_CLKCR & MASK_SCU_CLKCR_VDDC2LOW );
-    
+
     /* Checking for verification flag for any writing errors */
     if( ((NVM_NVMSTATUS & MASK_NVM_NVMSTATUS_VERR) >> INDX_NVM_NVMSTATUS_VERR) != 0u ){
       status = NVMComplete;
     }else{
       status = NVMNoError;
-    } 
+    }
   }else{
 
     status = NVMError;
@@ -122,23 +122,23 @@ NVMErrCodeType readNVM( WORD address, WORD * buf ){
 
   /* validate the address for range */
   if( (address < NVM_START_ADDRESS) || (address > NVM_END_ADDRESS) ){
-    
+
     status = NVMInvalidAddress;
 
   /* checking for status of Flash for Idle and Sleep Mode */
   }else if( (rd1 == 0x0u) && (rd2 == 0x0u) && (rd3 == 0x0u) ){
     /* reads one word */
     *buf = *((WORD*)address);
-    
+
     status = NVMComplete;
 
     rd1 = (NVM_NVMSTATUS & MASK_NVM_NVMSTATUS_ECC1READ) >> INDX_NVM_NVMSTATUS_ECC1READ;
     rd2 = (NVM_NVMSTATUS & MASK_NVM_NVMSTATUS_ECC2READ) >> INDX_NVM_NVMSTATUS_ECC2READ;
-    
+
     /* Checking for ECC error flags */
     if( (rd1 != 0x0u) || (rd2 != 0x0u) ){
       status = NVMError;
-    } 
+    }
   }else{
     status = NVMError;
   }
@@ -170,7 +170,7 @@ NVMErrCodeType eraseNVM( WORD address ){
       status = NVMInvalidAddress;
     }
   }
-  
+
   return status;
 
 }
@@ -199,7 +199,7 @@ NVMErrCodeType readByteNVM( WORD address, BYTE buf[], WORD NoOfBytes){
     for( lByteCnt = 0u; lByteCnt < NoOfBytes; lByteCnt++ ){
       *(buf + lByteCnt) = *((BYTE*)address + lByteCnt);
       status = NVMComplete;
-      
+
     }
     rd1 = (NVM_NVMSTATUS & MASK_NVM_NVMSTATUS_ECC1READ)  >> INDX_NVM_NVMSTATUS_ECC1READ;
     rd2 = (NVM_NVMSTATUS & MASK_NVM_NVMSTATUS_ECC2READ)  >> INDX_NVM_NVMSTATUS_ECC2READ;
@@ -214,6 +214,8 @@ NVMErrCodeType readByteNVM( WORD address, BYTE buf[], WORD NoOfBytes){
 
   return status;
 }
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //                                                  TERMS OF USE: MIT License
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

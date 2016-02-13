@@ -25,6 +25,8 @@ nbproject/private/
 *.hex
 *.map
 __*
+/obj
+
 
 # doxygen
 /doc

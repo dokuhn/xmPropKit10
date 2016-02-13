@@ -43,12 +43,13 @@
 
 
 /*
-#  
+#
 #  define ATTRIBUTE(...)        __attribute__((__VA_ARGS__))
 #  define FILE                  __MODULE__            ///< Name der aktuellen Datei.
 #  define FUNC                  __PRETTY_FUNCTION__   ///< Name der aktuellen Funktion.
 #  define LINE                  __LINE__              ///< Aktuelle Zeilennummer.
 #  define INLINE                inline
+#
 */
 
 #endif
